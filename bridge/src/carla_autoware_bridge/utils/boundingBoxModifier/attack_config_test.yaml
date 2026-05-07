@@ -1,0 +1,36 @@
+# All filters/modifiers that are specified will be applied sequentially --> later ones might overwrite earlier ones if they modify the same bounding box params
+
+#Topics need to be adapted in Autoware as well! (Output = original topic that should be changed, Input = new name of topic in Autoware)
+#Right now only messages of the type "DetectedObjects" are supported!
+# E.g. to modify detected object topic: Add as param when starting autoware: output/objects:=objects_raw
+# Other topics that use the same type can also be specified, but this is a bit cumbersome as it requires to modify the launch files
+topics:
+  input: /perception/object_recognition/detection/objects_raw
+  output: /perception/object_recognition/detection/objects
+
+pipeline:
+#Specifiy filters to control which bounding boxes are modified
+  filters:
+    - type: PositionFilter # Specify a region where objects should be modified 
+      params:
+        x_pos_min: 0.0 # x = how far away from ego vehicle (sensor)
+        x_pos_max: 100.0
+        y_pos_min: -3.0 # y = left / right of sensor
+        y_pos_max: 3.0
+        z_pos_min: 0.0 # z = height
+        z_pos_max: 5.0
+
+#Specify the actual modifiers that should be applied to the (filtered) objects
+  modifiers:
+    #Shift the positon of the bounding boxes: fixed shift or gradually apply more shift
+    - type: ShiftPosition
+      params:
+        dx: 0.0 # fixed shift (when gradual = true, this is the initial shift)
+        dy: 0.0
+        dz: 0.0
+        gradual: True # Instead of a fixed shift, shift in each frame a bit more - caveat if multiple objects fall into filter they will affect each other here!
+        gradual_x: 0.05
+        gradual_y: 0.05
+        gradual_z: 0.0
+    
+    

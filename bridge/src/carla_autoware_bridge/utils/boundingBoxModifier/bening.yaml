@@ -1,0 +1,7 @@
+# Only perform remap, but no bounding box modification
+# Might be useful to start attack at later point after setting up everything
+topics:
+  input: /perception/object_recognition/detection/objects_raw
+  output: /perception/object_recognition/detection/objects
+    
+    

@@ -1,0 +1,71 @@
+# Attack Config Template - DO NOT MODIFY: COPY AND SPECIFY ONLY WHAT YOU NEED
+
+# All filters/modifiers that are specified will be applied sequentially --> later ones might overwrite earlier ones if they modify the same bounding box params
+
+#Topics need to be adapted in Autoware as well! (Output = original topic that should be changed, Input = new name of topic in Autoware)
+#Right now only messages of the type "DetectedObjects" are supported!
+# E.g. to modify detected object topic: Add as param when starting autoware: output/objects:=objects_raw
+# Other topics that use the same type can also be specified, but this is a bit cumbersome as it requires to modify the launch files
+topics:
+  input: /perception/object_recognition/detection/objects_raw
+  output: /perception/object_recognition/detection/objects
+
+pipeline:
+#Specifiy filters to control which bounding boxes are modified
+  filters:
+    - type: LabelFilter # Only modify objects with a certain label
+      params:
+      # 0 = UNKNOWN, 1 = CAR, 2 = TRUCK, 3 = BUS, 4 = TRAILER, 5 = MOTORCYCLE, 6 = BICYCLE, 7 = PEDESTRIAN 
+      # (Note: availability of these depend on the exact model / point in the pipeline)
+        allowed_labels: [1, 2] 
+
+    - type: PositionFilter # Specify a region where objects should be modified 
+      params:
+        x_pos_min: 0.0 # x = how far away from ego vehicle (sensor)
+        x_pos_max: 30.0
+        y_pos_min: -5.0 # y = left / right of sensor
+        y_pos_max: 5.0
+        z_pos_min: 0.6 # z = height
+        z_pos_max: 2.5
+
+#Specify the actual modifiers that should be applied to the (filtered) objects
+  modifiers:
+    #Shift the positon of the bounding boxes: fixed shift or gradually apply more shift
+    - type: ShiftPosition
+      params:
+        dx: 1.0 # fixed shift (when gradual = true, this is the initial shift)
+        dy: 0.0
+        dz: 0.0
+        gradual: False # Instead of a fixed shift, shift in each frame a bit more - caveat if multiple objects fall into filter they will affect each other here!
+        gradual_x: 0.0 # Apply small numbers here, 0.1 is already a strong gradual shift
+        gradual_y: 0.0
+        gradual_z: 0.0
+    
+    #Set a specific position for the bounding box
+    - type: SetPosition
+      params: 
+        x: 30.0
+        y: 0.0
+        z: 1.0
+    
+    #Scale the size of the bounding box (by applying a factor to original dimensions)
+    - type: ScaleBoundingBox
+      params:
+        sx: 1.5
+        sy: 1.0
+        sz: 1.0
+    
+    #Set a specific size for the bounding box
+    - type: SetBoundingBoxDimensions
+      params:
+        x: 1.0
+        y: 1.0
+        z: 1.0
+        
+    #Change the label of the bounding box
+    - type: Misclassify
+      params:
+        new_label: 1
+        
+    #Erase the object completely
+    - type: DropObject
