@@ -1,0 +1,73 @@
+dataset:
+  output_dir: "benign_clearDay_lowTraffic_outerLoop"
+
+  json_topics:
+    lidar_centerpoint_objects:
+      topic: "/perception/object_recognition/detection/centerpoint/objects"
+
+    detection_objects:
+      topic: "/perception/object_recognition/detection/objects"
+
+    fusion_objects:
+      topic: "/perception/object_recognition/detection/clustering/camera_lidar_fusion/objects"
+
+    prediction:
+      topic: "/perception/object_recognition/objects"
+
+    localization:
+      topic: "/localization/kinematic_state"
+
+    planning_trajectory:
+      topic: "/planning/scenario_planning/trajectory"
+
+    planning_behavior_path:
+      topic: "/planning/scenario_planning/lane_driving/behavior_planning/path_with_lane_id"
+
+    planning_behavior_velocity:
+      topic: "/planning/scenario_planning/lane_driving/behavior_planning/path"
+
+    stop_reasons:
+      topic: "/planning/scenario_planning/status/stop_reasons"
+
+    control_cmd:
+      topic: "/control/command/control_cmd"
+
+    velocity_status:
+      topic: "/vehicle/status/velocity_status"
+
+    steering_status:
+      topic: "/vehicle/status/steering_status"
+
+  image_topics:
+    front_camera:
+      topic: "/sensing/camera/camera0/image_raw"
+
+  lidar_topics:
+    top_lidar:
+      topic: "/sensing/lidar/concatenated/pointcloud"
+
+
+scenario:
+  host: "127.0.0.1"
+  port: 1403
+
+  route:
+    id: 1         # 1 or 2 (Route Diagrams found at: "") 
+    customRoute: [] # Fill with waypoint [coordinates,orientation] if not using one of the route options via 'id' field, 'customRoute' takes precedence over 'id' if both are filled
+  
+  traffic:
+    # generate_traffic.py can be modified for more fine-grained customization
+    level: 1      # 1 = Light (30 cars/10 walkers), 2 = Medium (60 cars/30 walkers)
+    # customTraffic: # The values of the fields that are set in 'customTraffic' override the corresponding values in each level
+    #   numVehicles: 50
+    #   numWalkers: 50
+    #   globalPercentageSpeedDifference: 30.0 #30.0 
+    #   globalDistanceToLeadingVehicle: 3.5
+    #   percentagePedestriansCrossing: 50.0 #50.0
+
+    seed: 42      # For reproducibility
+    tm_port: 8000 # Traffic Manager Port
+    
+  weather:
+    # generate_weather.py can be modified for more fine-grained customization
+    environment: 1 # 1=ClearDay, 2=RainyDay, 3=ClearNight, 4=RainyNight
