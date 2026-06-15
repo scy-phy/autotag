@@ -75,5 +75,11 @@ In another terminal:
 - Then inside container run the scripts, e.g.:
 ```
 cd src/carla_autoware_bridge/utils
-python3 generate_traffic.py -p 1403
+python3 generate_traffic.py --config default_config.yaml
+python3 generate_weather.py --config default_config.yaml
+python3 set_route_vehicle_engage --config default_config.yaml  (need to run build script in dataset generation folder first! - see below)
 ```
+- `--config` name of the config file. Default: 'default_config.yaml'
+
+## Use Autoware ROS messages in the Bridge Container
+To 
