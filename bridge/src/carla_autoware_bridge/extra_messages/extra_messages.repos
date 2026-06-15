@@ -1,0 +1,9 @@
+repositories:
+  universe/external/tier4_autoware_msgs:
+    type: git
+    url: https://github.com/tier4/tier4_autoware_msgs.git
+    version: 29d1db4a3f887daf5b73b26a304522db13b651f5
+  core/autoware_adapi_msgs:
+    type: git
+    url: https://github.com/autowarefoundation/autoware_adapi_msgs.git
+    version: 12d6d7729be6b7b42612a202c29556261254ff30
