@@ -4,6 +4,8 @@ from autoware_auto_perception_msgs.msg import DetectedObjects
 from copy import deepcopy
 import yaml
 import argparse
+from std_msgs.msg import String
+import json
 
 
 # Run with: python3 boundingBoxModifier.py --config attack_config.yaml
@@ -41,7 +43,7 @@ class PositionFilter(ObjectFilter):
                 self.y_pos_min <= pos.y <= self.y_pos_max and
                 self.z_pos_min <= pos.z <= self.z_pos_max)
     
-#TODO: right now every the same changes are applied to all objects that match filter 
+#TODO: right now the same changes are applied to all objects that match filter 
 
 # MODIFIERS (ATTACKS)
 class ObjectModifier:
@@ -154,16 +156,23 @@ class AttackPipeline:
 
     def process(self, obj):
         if not self._matches(obj):
-            return obj
-        return self._apply_modifiers(obj)
+            return obj, False
+        return self._apply_modifiers(obj), True
 
     def process_batch(self, objects):
         result = []
+        attack_applied = False
+
         for obj in objects:
-            new_obj = self.process(obj)
+            new_obj, attacked = self.process(obj)
             if new_obj is not None:
                 result.append(new_obj)
-        return result
+
+            #For attack status message - label if at least one object modified
+            if attacked:
+                attack_applied = True
+
+        return result, attack_applied
 
 
 
@@ -191,14 +200,32 @@ class BoundingBoxModifier(Node):
         self.get_logger().info(f"Subscribed to: {input_topic}")
         self.get_logger().info(f"Publishing to: {output_topic}")
 
+        #For publishing message when attack is active
+        self.attack_status_pub = self.create_publisher(
+            String,
+            "/attack/status",
+            10
+        )
+
     def callback(self, msg: DetectedObjects):
         out_msg = DetectedObjects()
         out_msg.header = msg.header
 
         objects = [deepcopy(obj) for obj in msg.objects]
-        out_msg.objects = self.pipeline.process_batch(objects)
+        out_msg.objects, attack_applied = self.pipeline.process_batch(objects)
 
         self.pub.publish(out_msg)
+
+        #Publich attack status message
+        status_msg = String()
+        payload = {
+            "attack_name": "BoundingBoxModifier", #TODO: make this more specific based on which modifiers are applied
+            "timestamp_sec": msg.header.stamp.sec,
+            "timestamp_nanosec": msg.header.stamp.nanosec,
+            "attack_applied": attack_applied
+        }
+        status_msg.data = json.dumps(payload)
+        self.attack_status_pub.publish(status_msg)
 
 
 def build_pipeline_from_yaml(config_path, available_filters, available_modifiers):

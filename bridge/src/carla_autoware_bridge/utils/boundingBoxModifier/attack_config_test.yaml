@@ -25,12 +25,12 @@ pipeline:
     #Shift the positon of the bounding boxes: fixed shift or gradually apply more shift
     - type: ShiftPosition
       params:
-        dx: 0.0 # fixed shift (when gradual = true, this is the initial shift)
+        dx: 10.0 # fixed shift (when gradual = true, this is the initial shift)
         dy: 0.0
         dz: 0.0
-        gradual: True # Instead of a fixed shift, shift in each frame a bit more - caveat if multiple objects fall into filter they will affect each other here!
-        gradual_x: 0.05
-        gradual_y: 0.05
+        gradual: False # Instead of a fixed shift, shift in each frame a bit more - caveat if multiple objects fall into filter they will affect each other here!
+        gradual_x: 0.0
+        gradual_y: 0.0
         gradual_z: 0.0
     
     

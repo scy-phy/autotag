@@ -11,6 +11,7 @@
 Classes to handle Carla lidars
 """
 
+import json
 import numpy
 import time
 
@@ -18,6 +19,7 @@ from carla_ros_bridge.sensor import Sensor, create_cloud
 
 from sensor_msgs.msg import PointCloud2, PointField
 from rclpy import qos
+from std_msgs.msg import String
 
 try:
     from lidar_attack_msgs.msg import AttackConfig 
@@ -83,6 +85,14 @@ class Lidar(Sensor):
             )
         except:
             print("No Lidar attack possible due to missing config message package")
+
+        #For publishing message when attack is active
+        self.attack_status_pub = node.new_publisher(
+            String,
+            "/attack/status",
+            qos_profile=qos.qos_profile_sensor_data
+        )
+        
 
 
     def destroy(self):
@@ -413,6 +423,7 @@ class Lidar(Sensor):
             PointField(name='intensity', offset=12, datatype=PointField.FLOAT32, count=1),
             PointField(name='ring', offset=16, datatype=PointField.UINT16, count=1)
         ]
+        attack_applied = False
 
         lidar_data = numpy.fromstring(
             bytes(carla_lidar_measurement.raw_data), dtype=numpy.float32)
@@ -478,6 +489,8 @@ class Lidar(Sensor):
                         stabilize_anchor=patch_cfg.stabilize_anchor,
                         print_interval=30.0
                     )
+
+                    attack_applied = True
         
         # we take the opposite of y axis
         # (as lidar point are express in left handed coordinate system, and ros need right handed)
@@ -500,6 +513,22 @@ class Lidar(Sensor):
         cloud_array['ring'] = lidar_data[:, 4].astype(np.uint16)
 
         point_cloud_msg = create_cloud(header, fields, cloud_array)
+
+
+        #Publish message that attack is active
+        if self._attack_msg_received:
+                msg = String()
+
+                payload = {
+                    "attack_name": "Lidar Attack: Side Patch",
+                    "timestamp_sec": header.stamp.sec,
+                    "timestamp_nanosec": header.stamp.nanosec,
+                    "attack_applied": attack_applied
+                }
+
+                msg.data = json.dumps(payload)
+
+                self.attack_status_pub.publish(msg)
 
 
         self.lidar_publisher.publish(point_cloud_msg)
