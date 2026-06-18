@@ -6,11 +6,25 @@ from .base_lidar_attack import BaseLidarAttack
 
 class ObjectPatchAttack(BaseLidarAttack):
 
-    NAME = "Lidar Attack: Object Side Patch"
-
     def __init__(self, parameters):
         self.attack_patches = parameters["patches"] #TODO: error handling
         self._patch_anchors = {}
+
+        self.NAME = parameters.get(
+            "attack_name",
+            "Lidar Attack: Object Side Patch"
+        )
+
+        self.front_filter = parameters.get(
+            "front_filter",
+            {
+                "x_min": 3.0,
+                "x_max": 40.0,
+                "y_abs_max": 4.0,
+                "z_min": -1.9,
+                "z_max": 2.0,
+            }
+        )
 
     def apply(self, lidar_data):
 
@@ -75,12 +89,14 @@ class ObjectPatchAttack(BaseLidarAttack):
         xyz = lidar_data[:, :3]
 
         #search points in front of ego: 5-40m away, within 4m left/right, and between -1,9 and 2m height (from sensor, exlude groung points)
+        cfg = self.front_filter
+
         front_mask = (
-            (xyz[:, 0] > 3.0) &
-            (xyz[:, 0] < 40.0) &
-            (np.abs(xyz[:, 1]) < 4.0) &
-            (xyz[:, 2] > -1.9) & #At -2 - -2.1 there are ground points
-            (xyz[:, 2] < 2.0)
+            (xyz[:, 0] > cfg["x_min"]) &
+            (xyz[:, 0] < cfg["x_max"]) &
+            (np.abs(xyz[:, 1]) < cfg["y_abs_max"]) &
+            (xyz[:, 2] > cfg["z_min"]) &
+            (xyz[:, 2] < cfg["z_max"])
         )
 
         return xyz[front_mask], front_mask
