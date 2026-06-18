@@ -143,6 +143,9 @@ class LocationSearchRunner:
         self.monitor_node = MultiPerceptionMonitor()
         self.benign_baselines = {}
 
+        self.attack_type = "lidar_object_patch"
+        self.attack_class = "Hiding Attack"
+
     # Set / reset the ego vehicle 
     # If distance = None set to default position as in objects.json, if distance set calculate x roughly based on target
     def reset_ego(self, distance = None):
@@ -260,7 +263,7 @@ class LocationSearchRunner:
 
         print(f"Collecting benign baseline for distance {distance}")
 
-        self.attack_node.set_config([], enabled=False)
+        self.attack_node.set_config(attack_type="", attack_class="", parameters={}, enabled=False)
         rclpy.spin_once(self.attack_node)
 
         self.tick_n(INIT_FRAMES)
@@ -361,7 +364,7 @@ class LocationSearchRunner:
                 print(f"Probe set {probe_id}/{len(probe_sets)}")
 
                 # enable attack
-                self.attack_node.set_config(patches, enabled=True)
+                self.attack_node.set_config(attack_type=self.attack_type, attack_class=self.attack_class, parameters={"patches": patches}, enabled=True)
                 rclpy.spin_once(self.attack_node)
 
                 (
@@ -446,7 +449,7 @@ class LocationSearchRunner:
 
             # Compute baseline score for that distance
             # enable attack
-            self.attack_node.set_config(patch_set, enabled=True)
+            self.attack_node.set_config(attack_type=self.attack_type, attack_class=self.attack_class, parameters={"patches": patch_set}, enabled=True)
             rclpy.spin_once(self.attack_node)
 
             baseline = self.benign_baselines[d]
@@ -469,7 +472,7 @@ class LocationSearchRunner:
                 ]
 
                 # enable attack for truncated
-                self.attack_node.set_config(truncated, enabled=True)
+                self.attack_node.set_config(attack_type=self.attack_type, attack_class=self.attack_class, parameters={"patches": truncated}, enabled=True)
                 rclpy.spin_once(self.attack_node)
 
                 trunc_center_exist, _ , trunc_fusion_exist, _ = self.init_and_calculate_L_score()
@@ -534,7 +537,7 @@ class LocationSearchRunner:
 
         # Base - insert a single point
         cand_patches = [patches[sorted_point_list[0][0]]]
-        self.attack_node.set_config(cand_patches, enabled=True)
+        self.attack_node.set_config(attack_type=self.attack_type, attack_class=self.attack_class, parameters={"patches": cand_patches}, enabled=True)
         rclpy.spin_once(self.attack_node)
 
         curr_center_score, _, curr_fusion_score, _ = self.init_and_calculate_L_score()
@@ -551,7 +554,7 @@ class LocationSearchRunner:
             
             curr_patches = cand_patches.copy()
             curr_patches.append(patches[point_idx])
-            self.attack_node.set_config(curr_patches, enabled=True)
+            self.attack_node.set_config(attack_type=self.attack_type, attack_class=self.attack_class, parameters={"patches": curr_patches}, enabled=True)
             rclpy.spin_once(self.attack_node)
 
             center_score, _, fusion_score, _ = self.init_and_calculate_L_score()
@@ -973,7 +976,7 @@ class LocationSearchRunner:
                     print(f"Evaluating {a} patches @ {d}m")
 
                     # Apply attack
-                    self.attack_node.set_config(patches, enabled=True)
+                    self.attack_node.set_config(attack_type=self.attack_type, attack_class=self.attack_class, parameters={"patches": patches}, enabled=True)
                     rclpy.spin_once(self.attack_node)
 
                     center_exist, _, fusion_exist, _ = self.init_and_calculate_L_score()
