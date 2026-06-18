@@ -6,6 +6,8 @@ import json
 import numpy as np
 import time
 from datetime import datetime, timezone
+import os
+import shutil
 
 import rclpy
 
@@ -447,12 +449,26 @@ class GenericDatasetRecorder(Node):
             "json_topics": {}
         }
 
+        #Attack information
         attack_cfg = self.full_config.get("attack")
 
         if attack_cfg:
+
+            #TODO: sometimes specific target car is set, ideally this placement would also be specified here???
+
+            config_file = attack_cfg.get("attack_path")
+
+            if not config_file or not os.path.isfile(config_file):
+                raise FileNotFoundError(f"Attack config file not found: {config_file}; either disable attack or specify valid config file")
+            
+            copied_name = os.path.basename(config_file)
+            shutil.copy(config_file, os.path.join(self.output_dir, copied_name))
+
             metadata["attack"] = {
-                "name": attack_cfg.get("name"),
-                "description": attack_cfg.get("description")
+                "config_file": copied_name,
+
+                #"name": attack_cfg.get("name"),
+                #"description": attack_cfg.get("description")
             }
 
         # Scenario information

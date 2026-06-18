@@ -1,5 +1,6 @@
 dataset:
-  output_dir: "benign_clearNight_lowTraffic_longRoute"
+  #output_dir: "benign_clearNight_lowTraffic_longRoute"
+  output_dir: "franzi_test"
 
   json_topics:
     lidar_centerpoint_objects:
@@ -72,6 +73,7 @@ scenario:
     # generate_weather.py can be modified for more fine-grained customization
     environment: 3 # 1=ClearDay, 2=RainyDay, 3=ClearNight, 4=RainyNight
 
-#attack:
+attack:
+  attack_path: "../arbitraryObjectAttack/attack_config.yaml"
 #  name: 'LidarPatchInjection'
 #  description: 'Lidar cloud points injected to deceive the camera-lidar fusion pipeline'
