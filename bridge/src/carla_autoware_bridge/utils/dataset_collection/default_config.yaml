@@ -1,5 +1,5 @@
 dataset:
-  output_dir: "benign_clearDay_lowTraffic_outerLoop"
+  output_dir: "benign_clearNight_lowTraffic_longRoute"
 
   json_topics:
     lidar_centerpoint_objects:
@@ -52,7 +52,7 @@ scenario:
   port: 1403
 
   route:
-    id: 1         # 1 or 2 (Route Diagrams found at: "") 
+    id: 2         # 1 or 2 (Route Diagrams found at: "") 
     customRoute: [] # Fill with waypoint [coordinates,orientation] if not using one of the route options via 'id' field, 'customRoute' takes precedence over 'id' if both are filled
   
   traffic:
@@ -70,4 +70,8 @@ scenario:
     
   weather:
     # generate_weather.py can be modified for more fine-grained customization
-    environment: 1 # 1=ClearDay, 2=RainyDay, 3=ClearNight, 4=RainyNight
+    environment: 3 # 1=ClearDay, 2=RainyDay, 3=ClearNight, 4=RainyNight
+
+#attack:
+#  name: 'LidarPatchInjection'
+#  description: 'Lidar cloud points injected to deceive the camera-lidar fusion pipeline'

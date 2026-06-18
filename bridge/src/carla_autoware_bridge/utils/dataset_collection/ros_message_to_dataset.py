@@ -447,6 +447,14 @@ class GenericDatasetRecorder(Node):
             "json_topics": {}
         }
 
+        attack_cfg = self.full_config.get("attack")
+
+        if attack_cfg:
+            metadata["attack"] = {
+                "name": attack_cfg.get("name"),
+                "description": attack_cfg.get("description")
+            }
+
         # Scenario information
         metadata["scenario"] = {
             "route_id": (
@@ -483,7 +491,7 @@ class GenericDatasetRecorder(Node):
                 self.scenario
                 .get("weather", {})
                 .get("environment")
-            )
+            ),
         }
 
         # Image sensors

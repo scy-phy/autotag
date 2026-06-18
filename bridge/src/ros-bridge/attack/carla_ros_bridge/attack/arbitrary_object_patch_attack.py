@@ -346,4 +346,3 @@ class ObjectPatchAttack(BaseLidarAttack):
         print(front_points_sorted)
 
         print("===================================================\n")
-    

@@ -29,11 +29,16 @@ Then to start the attack we need to spawn a target vehicle and publish the confi
 Note: the attack assumes that the target vehicle is in front of the ego vehicle. The patch position is computed relative to the target vehicle. 
 
 Create an target vehicle:
-Exec into the bridge container in another terminal and run: `python3 benign.py -p 1403`
+Exec into the bridge container in another terminal and run: `python3 benign_scenario.py`
 
 Publish the attack config message:
 
-#TODO
+Start another bridge container with the same command as above.
+In the container run:
+
+#TODO: config
+
+`python3 run_attack.py`
 
 
 
