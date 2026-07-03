@@ -140,7 +140,7 @@ class Lidar(Sensor):
         attack_applied = False
         attack_name = None
 
-        if self._attack_msg_received:
+        if self._attack_msg_received and self.name == "sensor/lidar/front": #only apply attack for front sensor
             lidar_data, attack_applied, attack_name = self.attack_manager.apply(lidar_data)
         
         

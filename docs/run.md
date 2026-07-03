@@ -82,4 +82,10 @@ python3 set_route_vehicle_engage --config default_config.yaml  (need to run buil
 - `--config` name of the config file. Default: 'default_config.yaml'
 
 ## Use Autoware ROS messages in the Bridge Container
-To 
+To use autoware message in the bridge container run the following script:
+```
+cd src/carla_autoware_bridge/utils/dataset_collection/
+./build_messages.sh 
+```
+If you then exec into the container sourcing of the workspace is necessary again: `source install/setup.bash`
+

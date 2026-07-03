@@ -471,6 +471,12 @@ class GenericDatasetRecorder(Node):
                 #"description": attack_cfg.get("description")
             }
 
+            if "name" in attack_cfg:
+                metadata["attack"]["name"] = attack_cfg["name"]
+
+            if "description" in attack_cfg:
+                metadata["attack"]["description"] = attack_cfg["description"]
+
         # Scenario information
         metadata["scenario"] = {
             "route_id": (
@@ -509,6 +515,10 @@ class GenericDatasetRecorder(Node):
                 .get("environment")
             ),
         }
+
+        #Extra scenario information if specified
+        if "target_vehicle" in self.scenario:
+            metadata["scenario"]["target_vehicle"] = self.scenario["target_vehicle"]
 
         # Image sensors
         for sensor_name, entry in (

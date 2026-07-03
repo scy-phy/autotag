@@ -28,6 +28,10 @@ pipeline:
         z_pos_min: 0.6 # z = height
         z_pos_max: 2.5
 
+  #Activate the attack in only a certain amount of frames (probability based) - simulates imperfect attacks, i.e. flickering
+  activation:
+    probability: 0.9 #Default: 1.0 (all frames attacked)
+
 #Specify the actual modifiers that should be applied to the (filtered) objects
   modifiers:
     #Shift the positon of the bounding boxes: fixed shift or gradually apply more shift
@@ -69,3 +73,28 @@ pipeline:
         
     #Erase the object completely
     - type: DropObject
+
+#If a new object should be spawned use a creator - not affected by filters!
+  creators:
+    #Let an object appear
+    - type: SpawnObject
+      params:
+        existence_prob: 0.7 
+        label: 1
+        #Where to spawn object (relative to ego!)
+        init_pos_x: 30.0
+        init_pos_y: 0.0
+        init_pos_z: 1.0
+        orient_x: 0.0
+        orient_y: 0.0
+        orient_z: 0.0
+        orient_w: 1.0
+        #Dimensions of spawned object
+        dim_x: 4.0
+        dim_y: 2.0
+        dim_z: 2.0
+        #Without gradual, position relative to the ego never changes (object moves with same speed as ego!)
+        #gradual: False #If this is true the position of the spawned objects moves closer / further away from the ego 
+        #gradual_x: 0.1
+        #gradual_y: 0.0
+        #gradual_z: 0.0

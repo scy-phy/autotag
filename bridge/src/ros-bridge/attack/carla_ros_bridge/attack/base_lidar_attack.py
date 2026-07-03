@@ -6,3 +6,9 @@ class BaseLidarAttack():
     
     def apply(self, lidar_data):
         pass
+    
+    def update_parameters(self, parameters):
+        pass
+
+    def disable_attack(self):
+        pass

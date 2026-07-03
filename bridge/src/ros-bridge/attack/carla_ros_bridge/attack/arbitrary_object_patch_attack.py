@@ -26,9 +26,9 @@ class ObjectPatchAttack(BaseLidarAttack):
             }
         )
 
-    def apply(self, lidar_data):
+        self.attack_applied = False
 
-        attack_applied = False
+    def apply(self, lidar_data):
 
         # Attack logic - only apply attack if attack enabled 
         if len(self.attack_patches) > 0:
@@ -44,6 +44,7 @@ class ObjectPatchAttack(BaseLidarAttack):
             vehicle_points = self._extract_vehicle_cluster(front_points)
 
             if vehicle_points is not None:
+
                 # 3. estimate the dimensions of the front vehicle by approximating it with a simple rectangle 
                 rect = self._estimate_vehicle_rectangle(vehicle_points)
 
@@ -78,9 +79,34 @@ class ObjectPatchAttack(BaseLidarAttack):
                         print_interval=30.0
                     )
 
-                    attack_applied = True
+                    self.attack_applied = True
 
-        return lidar_data, attack_applied
+        return lidar_data, self.attack_applied
+    
+    def update_parameters(self, parameters):
+
+        self.attack_patches = parameters["patches"]
+        self._patch_anchors = {}
+
+        self.NAME = parameters.get(
+            "attack_name",
+            "Lidar Attack: Object Side Patch"
+        )
+
+        self.front_filter = parameters.get(
+            "front_filter",
+            {
+                "x_min": 3.0,
+                "x_max": 40.0,
+                "y_abs_max": 4.0,
+                "z_min": -1.9,
+                "z_max": 2.0,
+            }
+        )
+
+    def disable_attack(self):
+        self.attack_applied = False
+        
 
     ## Helper functions
 

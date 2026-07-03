@@ -1,6 +1,6 @@
 dataset:
-  #output_dir: "benign_clearNight_lowTraffic_longRoute"
-  output_dir: "franzi_test"
+  #output_dir: "benign_rainyNight_mediumTraffic_longRoute"
+  output_dir: "attack_hiding_boundingBoxModification_clearDay_noTraffic_straightRoute_oneTargetVehicle_85pFramesAttacked"
 
   json_topics:
     lidar_centerpoint_objects:
@@ -53,27 +53,35 @@ scenario:
   port: 1403
 
   route:
-    id: 2         # 1 or 2 (Route Diagrams found at: "") 
-    customRoute: [] # Fill with waypoint [coordinates,orientation] if not using one of the route options via 'id' field, 'customRoute' takes precedence over 'id' if both are filled
+    id: 3         # 1, 2 or 3 to select preset routes based on map configuration of Town10.
+    customRoute: [] # Fill with waypoint [coordinates, orientation] if not using one of the route options via 'id' field. 
+                    # 'customRoute' takes precedence over 'id' if both are filled.
   
   traffic:
-    # generate_traffic.py can be modified for more fine-grained customization
-    level: 1      # 1 = Light (30 cars/10 walkers), 2 = Medium (60 cars/30 walkers)
-    # customTraffic: # The values of the fields that are set in 'customTraffic' override the corresponding values in each level
-    #   numVehicles: 50
-    #   numWalkers: 50
-    #   globalPercentageSpeedDifference: 30.0 #30.0 
-    #   globalDistanceToLeadingVehicle: 3.5
-    #   percentagePedestriansCrossing: 50.0 #50.0
+    # generate_traffic.py can be modified for more fine-grained customization.
+    level: 0      # 0 = None (0 cars/0 walkers), 1 = Light (30 cars/10 walkers), 2 = Medium (60 cars/30 walkers)
+    #customTraffic: # The values of the fields that are set in 'customTraffic' override the corresponding values in each level.
+    #  numVehicles: 50
+    #  numWalkers: 50
+    #  globalPercentageSpeedDifference: 30.0
+    #  globalDistanceToLeadingVehicle: 3.5
+    #  percentagePedestriansCrossing: 50.0
 
     seed: 42      # For reproducibility
     tm_port: 8000 # Traffic Manager Port
     
   weather:
-    # generate_weather.py can be modified for more fine-grained customization
-    environment: 3 # 1=ClearDay, 2=RainyDay, 3=ClearNight, 4=RainyNight
+    # generate_weather.py can be modified for more fine-grained customization.
+    environment: 1 # 1=ClearDay, 2=RainyDay, 3=ClearNight, 4=RainyNight
 
+  #some extra standing vehicle (mainly for attack scenarios) - comment out if not needed
+  target_vehicle: 
+    spawn_index: 75
+    bp_number: 1
+
+#for attack scenarios, comment out if not needed
 attack:
-  attack_path: "../arbitraryObjectAttack/attack_config.yaml"
-#  name: 'LidarPatchInjection'
-#  description: 'Lidar cloud points injected to deceive the camera-lidar fusion pipeline'
+  attack_path: "../boundingBoxModifier/attack_config.yaml"
+  #name and attack description are optional
+  attack_name: "Hiding Attack: Bounding Box Modification"
+  description: "The attack simulates a hiding attack by removing the bounding box of a target vehicle in front of the ego vehicle."

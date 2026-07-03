@@ -71,7 +71,9 @@ def main():
     custom_traffic = traffic_config.get('customTraffic')
     t_level = traffic_config.get('level', 1)
 
-    if t_level == 1:
+    if t_level == 0:
+        num_vehicles, num_walkers = 0, 0
+    elif t_level == 1:
         num_vehicles, num_walkers = 30, 10
     elif t_level == 2:
         num_vehicles, num_walkers = 60, 30
