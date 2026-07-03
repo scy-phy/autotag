@@ -1,0 +1,29 @@
+attack_metadata:
+  attack_name: "Hiding Attack: Bounding Box Modification"
+  description: "The attack simulates a hiding attack by removing the bounding box of a target vehicle in front of the ego vehicle."
+
+topics:
+  input: /perception/object_recognition/detection/objects_raw
+  output: /perception/object_recognition/detection/objects
+
+pipeline:
+#Specifiy filters to control which bounding boxes are modified
+  filters:
+    - type: PositionFilter # Specify a region where objects should be modified 
+      params:
+        x_pos_min: 0.0 # x = how far away from ego vehicle (sensor)
+        x_pos_max: 60.0
+        y_pos_min: -3.0 # y = left / right of sensor
+        y_pos_max: 3.0
+        z_pos_min: 0.0 # z = height
+        z_pos_max: 5.0
+
+  activation:
+    probability: 0.85 # 85% frames attacked
+
+#Specify the actual modifiers that should be applied to the (filtered) objects
+  modifiers:
+    #Hiding attack: drop object (bounding box)
+    - type: DropObject
+    
+    

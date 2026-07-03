@@ -1,0 +1,66 @@
+# --- DATASET CONFIGURATION TEMPLATE ---
+
+# The base directory name for recorded dataset files
+output_dir: "your_dataset_name"
+
+# Define the ROS 2 topics to subscribe to and record
+json_topics:
+  # Map name: { topic: "ROS_topic_path" }
+  # Example: Add topics here. These get stored under a folder called json. The topic_json_name is the name of the json that will be used to store framewise data of this topic.
+  topic_json_name:
+    topic: "/ros/topic/name"
+
+# Image and Lidar sensors configurations. These get stored under folders called images, lidar respectively
+image_topics:
+  camera_name:
+    topic: "/sensing/camera/name/image_raw"
+
+lidar_topics:
+  lidar_name:
+    topic: "/sensing/lidar/name/pointcloud"
+
+# Scenario Configuration
+scenario:
+  # Host and Port for CARLA Client connection (shared by Traffic/Weather)
+  host: "127.0.0.1"
+  port: 1403
+
+  # Routing logic for Autoware
+  route:
+    # id: Use 1 or 2 to select preset routes based on map configuration of Town10
+    # 1: Outer loop of the map's roads
+    # 2: Longer Route through inner road as well
+    id: 1
+    # customRoute: Provide list of waypoints to form route with this format for each point [(x, y, z), (x, y, z, w)], [(x, y, z), (x, y, z, w)] to override ID
+    # Each point: position (x,y,z), orientation (x, y, z, w)
+    # It can be observed how it is done for route 1 and 2 in set_route_engage_vehicle.py 
+    # If customRoute is not empty, it takes precedence over route id
+    customRoute: [] 
+
+  # Traffic Manager Configuration
+  # generate_traffic.py accepts this input and applies traffic accordingly
+  traffic:
+    # level: 0 = Absolute Zero Traffic, 1 = Light (30/10/30.0/2.5/50.0), 2 = Medium (60/30/30.0/2.5/50.0)
+    # numVehicles/numWalkers/globalPercentageSpeedDifference/globalDistanceToLeadingVehicle/percentagePedestriansCrossing
+    # numVehicles: Number of vehicles spawned into the map
+    # numWalkers: Number of pedestrians spawned into the map
+    # globalPercentageSpeedDifference: How much slower vehicles move compared to the speed limit in a given road (30.0 = 30% slower than speed limit)
+    # globalDistanceToLeadingVehicle: Min distance vehicles maintain to the vehicle ahead
+    # percentagePedestriansCrossing: How many pedestrians will walk through the road
+    level: 1
+    tm_port: 8000
+    # seed: Use the same seed for reproducibility in terms of how the traffic is spawned 
+    seed: 42
+    # Optional: Enable custom traffic to override values from levels 1 or 2 (uncomment to use)
+    # customTraffic:
+    #   numVehicles: 50
+    #   numWalkers: 50
+    #   globalPercentageSpeedDifference: 30.0
+    #   globalDistanceToLeadingVehicle: 2.5
+    #   percentagePedestriansCrossing: 50.0
+
+  # Weather Configuration
+  # generate_weather.py accepts this input and applies weather accordingly
+  weather:
+    # environment: 1=ClearDay, 2=RainyDay, 3=ClearNight, 4=RainyNight
+    environment: 1
