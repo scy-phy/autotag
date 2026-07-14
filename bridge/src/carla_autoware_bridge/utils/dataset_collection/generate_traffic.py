@@ -82,6 +82,7 @@ def main():
     global_lead_dist = 2.5
     percent_pedestrians_crossing = 50.0
 
+    # Override specific values of preset level if configuration is as such.
     if custom_traffic:
         print("Using customTraffic configuration")
         num_vehicles = custom_traffic.get('numVehicles', num_vehicles)

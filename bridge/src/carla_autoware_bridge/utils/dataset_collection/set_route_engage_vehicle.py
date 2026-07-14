@@ -137,7 +137,7 @@ def main(args=None):
 
     node = AutowareAPIController()
 
-    # Execute the sequence
+    # Execute the sequence of clearing any already set route, setting route as per config, engaging the vehicle into autonomous mode
     clear_route_response = node.clear_route()
     node.get_logger().info(f'Clear Route Status: Code {clear_route_response.status.code}')
 

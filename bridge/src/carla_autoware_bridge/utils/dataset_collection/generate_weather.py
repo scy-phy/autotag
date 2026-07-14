@@ -34,7 +34,7 @@ def main():
     world = client.get_world()
 
     # ==========================================
-    # Environment Selection
+    # Weather Selection
     # 1 = Clear Day
     # 2 = Rainy Day
     # 3 = Clear Night
@@ -67,7 +67,6 @@ def main():
 
     elif weather_env == 3:
         print("Setting weather: Clear Night")
-        # A negative altitude angle puts the sun below the horizon
         weather.sun_altitude_angle = -90.0 
         weather.sun_azimuth_angle = 0.0
         weather.cloudiness = 0.0
