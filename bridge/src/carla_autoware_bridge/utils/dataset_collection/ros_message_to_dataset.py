@@ -56,9 +56,6 @@ class GenericDatasetRecorder(Node):
     def __init__(self, config_path):
 
         super().__init__("generic_dataset_recorder")
-
-        # time.sleep(1)  # Allow time for ROS graph to initialize
-
         
         # Load YAML config --> specifying topics to record and output directory
         with open(config_path, "r") as f:
@@ -104,9 +101,7 @@ class GenericDatasetRecorder(Node):
                 self.get_logger().info("All topics discovered!")
                 break
 
-            # Block until any new topic joins the DDS network - function does not exist
-            #graph_event = self.get_node_graph_interface().get_graph_event()
-            #self.get_node_graph_interface().wait_for_graph_change(graph_event, timeout_ns=1_000_000_000)
+            # Wait for DDS graph updates by periodically spinning the node.
             rclpy.spin_once(self, timeout_sec=1.0)
 
         for topic_name, topic_types in (
@@ -280,10 +275,7 @@ class GenericDatasetRecorder(Node):
     
     def check_attack_status(self, timestamp_ns):
 
-        #Here attack labeling based on attack message
-        #Could implement something different here
-
-        #This is set based on message 
+        #This is set based on /attack/status message set in attack script
         return self.current_attack
     
 
@@ -337,12 +329,6 @@ class GenericDatasetRecorder(Node):
             data["attack_applied"],
             data["attack_name"]
         )
-
-        #To do logic based on timestamp - discarded
-        #ts = round(data["timestamp_sec"] * 1_000_000_000 + data["timestamp_nanosec"], -8) # Round to nearest 100ms 
-        #self.attack_events[ts] = (data["attack_applied"], data["attack_name"])
-
-
     
     # Image recording
     def record_image(
@@ -601,9 +587,6 @@ class GenericDatasetRecorder(Node):
 
         for f in self.json_files.values():
             f.close()
-
-
-
 
 
 # Main
