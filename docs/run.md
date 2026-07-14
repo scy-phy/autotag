@@ -1,7 +1,6 @@
 # Simulator - Running the Pipeline
 
 This describes how to run the complete simulator pipeline manually.
-(TODO: it might be helpful to put all of this into a script)
 
 Carla, Autoware and the connecting bridge all run in seperate docker containers.
 They should be started in the following order (as described below): Carla --> Bridge --> Autoware 
@@ -36,10 +35,10 @@ docker run --privileged --gpus all --net=host -e DISPLAY=$DISPLAY carlasim/carla
 ## Starting the bridge (without any attack logic)
 In another terminal run:
 ``` 
-docker run -it -e RMW_IMPLEMENTATION=rmw_cyclonedds_cpp -e CYCLONEDDS_URI=file:///cyclonedds.xml --volume ~/cyclonedds.xml:/cyclonedds.xml -v ~/cypherAV/cypher-av/bridge/src/carla_autoware_bridge:/tum/src/carla_autoware_bridge --network host tumgeka/carla-autoware-bridge:latest 
+docker run -it -e RMW_IMPLEMENTATION=rmw_cyclonedds_cpp -e CYCLONEDDS_URI=file:///cyclonedds.xml --volume ~/cyclonedds.xml:/cyclonedds.xml -v "$(pwd)/bridge/src/carla_autoware_bridge:/tum/src/carla_autoware_bridge --network host tumgeka/carla-autoware-bridge:latest 
 ```
 
-- `~/cypherAV/cypher-av/bridge/src/carla_autoware_bridge` is the folder where the bridge code is stored
+- `$(pwd)/bridge/src/carla_autoware_bridge` is the absolute path of where the bridge code is stored
 
 Then inside the docker run:
 ```
@@ -63,8 +62,11 @@ source install/setup.bash
 ros2 launch autoware_launch e2e_simulator.launch.xml vehicle_model:=carla_t2_vehicle sensor_model:=carla_t2_sensor_kit map_path:=/home/carla/carla_aw_bridge/autoware/Town10/ perception_mode:=camera_lidar_fusion
 ```
 
+- `/home/carla/carla_aw_bridge/autoware/` is the absolute path of where autoware code is stored.
 - `map_path` path to map. Replace with the actual path to the map
-- `perception_mode` specifies the mode the perception is done in Autoware. To run with lidar only the argument is not requiered
+- `perception_mode` specifies the mode the perception is done in Autoware. To run with lidar only the argument is not required
+
+After starting Autoware, the YOLO Image model takes a while to load up, it is necessary to wait for the image sensor of Autoware to start showing the pov of the vehicle before engaging the vehicle into autonomous mode from the script "set_route_vehicle_engage.py".
 
 ## Running additional Carla Scripts
 For example additional vehicles as a target, etc. can all be spawned via Python scripts. There are some example scripts in the \utils folder
@@ -77,7 +79,7 @@ In another terminal:
 cd src/carla_autoware_bridge/utils
 python3 generate_traffic.py --config default_config.yaml
 python3 generate_weather.py --config default_config.yaml
-python3 set_route_vehicle_engage --config default_config.yaml  (need to run build script in dataset generation folder first! - see below)
+python3 set_route_vehicle_engage.py --config default_config.yaml  (need to run build script in dataset generation folder first! - see below)
 ```
 - `--config` name of the config file. Default: 'default_config.yaml'
 
@@ -88,4 +90,3 @@ cd src/carla_autoware_bridge/utils/dataset_collection/
 ./build_messages.sh 
 ```
 If you then exec into the container sourcing of the workspace is necessary again: `source install/setup.bash`
-
