@@ -87,4 +87,7 @@ The dataset collection labels the attacked frames automatically to ensure ground
 
 ### Implementing Other Attacks
 
-#TODO
+The pipeline can also be adapted to implement new types of attacks that are not covered by us: 
+- New configuration files can be created and attack scripts (in python) can be written to take inputs from them. 
+- The key is to publish attack messages similar to how it is done currently in the lidar and bounding box modifier attacks so that the dataset generation script can read them the same way to label attacked timeframes. 
+- If your attack requires any modification of the autoware pipeline stack (similar to the bounding box modifier) or manipulation of data when being transmitted via the bridge to autoware (similar to the lidar attack), they can be done in the autoware or bridge launch command accordingly.
