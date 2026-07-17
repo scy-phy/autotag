@@ -11,9 +11,8 @@ Carla simulates the environment and generates all sensor data. Autoware simulate
 ![Alt text](.images/SimulatorOverview.drawio.png "Simulator Overview")
 
 ## Preparation
+This step depends on the network/CycloeDDS configurations. It might or might not be necessary. 
 Run the following in a terminal: 
-(TODO: in theory one could also make this persistent (at least the last 3))
-
 ``` 
 sudo ip link set lo multicast on
 sudo sysctl -w net.core.rmem_max=2147483647
@@ -51,7 +50,6 @@ ros2 launch carla_autoware_bridge carla_aw_bridge.launch.py port:=1403 town:=Tow
 
 ## Starting Autoware
 In a third terminal:
-(On our setup first start the conda base environment as rocker is only installed there: `conda activate`)
 ```
 rocker --network=host -e RMW_IMPLEMENTATION=rmw_cyclonedds_cpp -e LIBGL_ALWAYS_SOFTWARE=1 -e CYCLONEDDS_URI=file:///cyclonedds.xml --volume ~/cyclonedds.xml:/cyclonedds.xml --x11 --nvidia --volume /home/carla/carla_aw_bridge -- ghcr.io/autowarefoundation/autoware:humble-2024.01-cuda-amd64-keyfix
 ```

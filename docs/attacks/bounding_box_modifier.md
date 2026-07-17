@@ -10,8 +10,6 @@ Therefore, a new ROS node is added that receives the original detected objects, 
 
 The implementation offers different functionality on how to modify the bounding boxes to enable the implementation of different attacks.
 
-![Alt text](.images/BoundingBoxModifier.drawio.png "Modifier Overview")
-
 ## Current Supported Functionality
 
 Currently the following modifications are possible:
@@ -21,21 +19,28 @@ Currently the following modifications are possible:
 - Changing size of bounding box
 - Changing label (i.e. classification) of bounding box
 - Drop bounding boxes completely
+- Add new bounding boxes
 
-By filtering the attack can be adapted to specific objects. Currently available filters:
+By filtering, the attack can be adapted to specific objects. Currently available filters:
 
 - Position Filter
 - Label Filter
 
-This enables to simulate e.g.: hiding attacks, misclassification attacks, attacks targeting tracking
+This enables to simulate e.g.: hiding attacks, appearing attacks, misclassification attacks, attacks targeting tracking
 
 ## How to use
 
-To implement a specific attack, create a yaml file specifying the concrete modifications and filters. A detailed explanation of the possibilities is included in the template yaml file (DO NOT MODIFY TEMPLATE DIRECTLY!)
+- To implement a specific attack, create a yaml file specifying the concrete modifications and filters. A detailed explanation of the possibilities is included in the template yaml file: `bridge/src/carla_autoware_bridge/utils/boundingBoxModifier/attack_config_template.yaml` (DO NOT MODIFY TEMPLATE DIRECTLY!)
 
-In Autoware the topics need to be remapped accordingly. For the current implementation start Autoware with the following extra argument: `output/objects:=objects_raw`
+- Run: 
+```
+cd bridge/src/carla_autoware_bridge/utils/boundingBoxModifier
+python3 boundingBoxModifier.py --config attack_config.yaml
+```
+- In Autoware the topics need to be remapped accordingly. For the current implementation start Autoware with the following extra argument: `output/objects:=objects_raw`
 Full command: 
 ```
 ros2 launch autoware_launch e2e_simulator.launch.xml vehicle_model:=carla_t2_vehicle sensor_model:=carla_t2_sensor_kit map_path:=/home/carla/carla_aw_bridge/autoware/Town10/ perception_mode:=camera_lidar_fusion output/objects:=objects_raw
 ```
+- Note: if the modification should be done at other points in the pipeline, Autoware launch files need to be changed slightly to do the remapping. Currently only messages of the type "DetectedObjects" are supported.
 
