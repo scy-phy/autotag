@@ -7,7 +7,7 @@ from .base_lidar_attack import BaseLidarAttack
 class ObjectPatchAttack(BaseLidarAttack):
 
     def __init__(self, parameters):
-        self.attack_patches = parameters["patches"] #TODO: error handling
+        self.attack_patches = parameters["patches"] 
         self._patch_anchors = {}
 
         self.NAME = parameters.get(
@@ -224,16 +224,7 @@ class ObjectPatchAttack(BaseLidarAttack):
             anchor_y,
             anchor_z
         ])
-
-        # either compute anchor once or recompute for each frame - once might be less inaccurate when far away but prevents the patch from moving in position 
-        """if stabilize_anchor:
-            if not hasattr(self, "_patch_anchor"):
-                self._patch_anchor = current_anchor
-            anchor = self._patch_anchor
-        else:
-            anchor = current_anchor"""
         
-        #TODO: assign proper id to each patch 
         patch_id = f"{x_offset}_{y_offset}_{z_offset}_{side}_{patch_size}"
 
         if stabilize_anchor:
@@ -255,12 +246,6 @@ class ObjectPatchAttack(BaseLidarAttack):
                 mean_dy
             )
 
-            """z_coords = np.arange(
-                anchor[2] - patch_size/2,
-                anchor[2] + patch_size/2,
-                mean_dz
-            )"""
-
             z_coords = np.arange(
                 anchor[2],
                 anchor[2] + patch_size,
@@ -278,8 +263,6 @@ class ObjectPatchAttack(BaseLidarAttack):
             if patch.shape[0] == 0:
                 return lidar_data
 
-            # 7. Simulate realistic sparsity - drop each point with 20% chance 
-            # TODO: could also adapt this via param 
             keep_mask = np.random.rand(patch.shape[0]) > 0.2
             patch = patch[keep_mask]
 
@@ -289,8 +272,6 @@ class ObjectPatchAttack(BaseLidarAttack):
             return lidar_data
 
         # 8. Add intensity and ring information to the patch points to generate correct points 
-        # TODO: could make intensity also adaptive or based on car points
-        # TODO: not sure if the ring information is really realistic, but not sure if it actually matters for the attack 
         new_points = np.zeros((density, 5), dtype=np.float32)
         new_points[:, 0:3] = patch
         new_points[:, 3] = 0.7 + 0.05 * np.random.randn(density) # assign a relatively high intensity + some small variations (in paper they mention reflective surfaces)
