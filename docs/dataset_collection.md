@@ -71,8 +71,16 @@ python3 set_route_vehicle_engage --config default_config.yaml
 
 - `--config` name of the config file. Default: 'default_config.yaml'
 
-If you'd like to trigger an attack at any point during the vehicle's journey through the route,  attack scripts can be run as described above.
+If you'd like to trigger an attack at any point during the vehicle's journey through the route,  attack scripts can be run as described below.
 
+### Reset Ego Vehicle Position
+
+After a route has been completed, the ego vehicle can be returned to its original spawn point with the help of the reset_pose.py script provided in the helper scripts.
+
+```
+cd src/carla_autoware_bridge/utils/helper_scripts
+python3 reset_pose.py
+```
 
 ### Triggering Attacks
 There are two different implementations of injecting attacks:
